@@ -11,6 +11,10 @@ gem plugin to describe a gem by name
    bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. 
 
+== TODO
+
+Remote gem descriptions
+
 == Copyright
 
 Copyright (c) 2009 Chad Fowler. See LICENSE for details.
