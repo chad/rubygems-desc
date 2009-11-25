@@ -2,6 +2,8 @@
 
 gem plugin to describe a gem by name
 
+Yea, I know it overlaps with 'gem list -d'. But I wanted one command and I wanted the download #s.
+
 == Note on Patches/Pull Requests
  
 * Fork the project.
