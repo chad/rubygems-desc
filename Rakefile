@@ -10,6 +10,7 @@ begin
     gem.email = "chad@chadfowler.com"
     gem.homepage = "http://github.com/chad/rubygems-desc"
     gem.authors = ["Chad Fowler"]
+    gem.add_dependency "httparty"
     gem.add_development_dependency "thoughtbot-shoulda"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end

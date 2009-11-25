@@ -1,4 +1,22 @@
 require 'rubygems/command'
+require 'httparty'
+
+class RemoteGem
+  attr_accessor :name, :version, :authors, :info, :downloads, :rubyforge_project
+  include HTTParty
+  format :json
+  def self.info_for(name)
+    data = get("http://gemcutter.org/api/v1/gems/#{name}.json")
+    data.code == 404 ? nil : new(data)
+  end
+  
+  def initialize(hash)
+    hash.each do |key, value|
+      __send__("#{key}=", value)
+    end
+  end
+end
+
 
 class Gem::Commands::DescCommand < Gem::Command
 
@@ -18,25 +36,16 @@ class Gem::Commands::DescCommand < Gem::Command
 
   def execute
     name = get_one_gem_name
-
-    dep = Gem::Dependency.new name, options[:version]
-    specs = Gem.source_index.search dep
-
-    if specs.empty? then
-      #try remote
-      fetcher = Gem::SpecFetcher.fetcher
-      specs = (fetcher.fetch dep, false, false, false)
-      specs = specs.first
-      if specs.nil? || specs.empty?
-        alert_error "No gem found: #{dep}"
-        terminate_interaction 1
-      end
-      specs = [specs.first]
+    remote_gem = RemoteGem.info_for(name)
+    if remote_gem
+      say "version: #{remote_gem.version}"
+      say "authors: #{remote_gem.authors}"
+      say "downloads: #{remote_gem.downloads}"
+      say ""
+      say "\t#{remote_gem.info}"
+    else
+      say "Couldn't find #{name} in repository"
     end
-
-    spec = specs.last
-    say "#{spec.name}"
-    say "\t#{spec.description}"
   end
 
 end
