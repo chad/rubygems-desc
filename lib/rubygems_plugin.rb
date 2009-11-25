@@ -2,17 +2,14 @@ require 'rubygems/command'
 
 class Gem::Commands::DescCommand < Gem::Command
 
-  include Gem::VersionOption
 
   def initialize
     super 'desc', 'Get description of a gem given its name',
           :version => Gem::Requirement.default
-
-    add_version_option
   end
 
   def arguments # :nodoc:
-    'GEMNAME       name of an installed gem to describe'
+    'GEMNAME       name of a gem to describe'
   end
 
   def usage # :nodoc:
@@ -26,8 +23,15 @@ class Gem::Commands::DescCommand < Gem::Command
     specs = Gem.source_index.search dep
 
     if specs.empty? then
-      alert_error "No installed gem #{dep}"
-      terminate_interaction 1
+      #try remote
+      fetcher = Gem::SpecFetcher.fetcher
+      specs = (fetcher.fetch dep, false, false, false)
+      specs = specs.first
+      if specs.nil? || specs.empty?
+        alert_error "No gem found: #{dep}"
+        terminate_interaction 1
+      end
+      specs = [specs.first]
     end
 
     spec = specs.last
